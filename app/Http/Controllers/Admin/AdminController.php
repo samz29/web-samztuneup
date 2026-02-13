@@ -1,0 +1,90 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\AppSetting;
+use App\Models\Booking;
+use App\Models\CallFee;
+use App\Models\User;
+use Illuminate\Http\Request;
+
+class AdminController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function dashboard()
+    {
+        // Get dashboard statistics
+        $stats = [
+            'total_users' => User::count(),
+            'total_bookings' => Booking::count(),
+            'pending_bookings' => Booking::where('status', 'pending')->count(),
+            'completed_bookings' => Booking::where('status', 'completed')->count(),
+            'total_call_fees' => CallFee::count(),
+        ];
+
+        // Recent bookings
+        $recentBookings = Booking::with(['user', 'callFee'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Monthly booking stats for chart
+        $monthlyStats = Booking::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->pluck('count', 'month')
+            ->toArray();
+
+        // Workshop location settings
+        $workshopLocation = [
+            'latitude' => AppSetting::getValue('workshop_latitude', -6.2088),
+            'longitude' => AppSetting::getValue('workshop_longitude', 106.8456),
+            'address' => AppSetting::getValue('workshop_address', 'Jakarta, Indonesia'),
+        ];
+
+        return view('admin.dashboard', compact('stats', 'recentBookings', 'monthlyStats', 'workshopLocation'));
+    }
+
+    public function updateWorkshopLocation(Request $request)
+    {
+        $request->validate([
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'address' => 'required|string|max:255',
+        ]);
+
+        AppSetting::setValue('workshop_latitude', $request->latitude, 'string', 'location');
+        AppSetting::setValue('workshop_longitude', $request->longitude, 'string', 'location');
+        AppSetting::setValue('workshop_address', $request->address, 'string', 'location');
+
+        return redirect()->back()->with('success', 'Lokasi workshop berhasil diperbarui.');
+    }
+
+    public function updateLogo(Request $request)
+    {
+        $request->validate([
+            'logo' => 'nullable|image|mimes:png,jpg,jpeg,gif,svg|max:2048',
+            'favicon' => 'nullable|image|mimes:png,jpg,jpeg,gif,ico|max:1024',
+        ]);
+
+        // Handle logo upload
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('logos', 'public');
+            AppSetting::setValue('site_logo', $logoPath, 'file', 'appearance');
+        }
+
+        // Handle favicon upload
+        if ($request->hasFile('favicon')) {
+            $faviconPath = $request->file('favicon')->store('favicons', 'public');
+            AppSetting::setValue('site_favicon', $faviconPath, 'file', 'appearance');
+        }
+
+        return redirect()->back()->with('success', 'Logo dan favicon berhasil diperbarui.');
+    }
+}
