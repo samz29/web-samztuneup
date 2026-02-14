@@ -3,35 +3,42 @@
 ## 📋 Daftar Hosting yang Direkomendasikan
 
 ### 1. **Railway** (Paling Mudah - Gratis untuk Starter)
+
 Railway.app - Platform as a Service modern
 
 **Keuntungan:**
+
 - Deploy langsung dari GitHub
 - Database PostgreSQL/MySQL otomatis
 - SSL gratis
 - Auto-scaling
 
 **Cara Deploy:**
+
 1. Buat akun di railway.app
 2. Connect GitHub repository
 3. Railway otomatis detect Laravel dan setup
 4. Database akan dibuat otomatis
 
 ### 2. **DigitalOcean App Platform**
+
 App Platform - Managed hosting
 
 **Keuntungan:**
+
 - $5/bulan untuk starter
 - Auto-scaling
 - Built-in database
 - Global CDN
 
 ### 3. **VPS/Cloud Server** (Lebih Kontrol)
+
 - DigitalOcean Droplet ($6/bulan)
 - AWS EC2 Lightsail
 - Google Cloud Compute Engine
 
 ### 4. **Shared Hosting** (Termurah)
+
 - Niagahoster, Rumahweb, dll.
 - cPanel hosting
 
@@ -40,6 +47,7 @@ App Platform - Managed hosting
 ## 🚀 Langkah Deploy ke VPS/Cloud Server
 
 ### Persiapan Server
+
 ```bash
 # Update sistem
 sudo apt update && sudo apt upgrade -y
@@ -64,6 +72,7 @@ sudo mysql_secure_installation
 ```
 
 ### Upload dan Setup Aplikasi
+
 ```bash
 # Clone repository
 cd /var/www
@@ -98,6 +107,7 @@ sudo chmod -R 755 /var/www/samztune-up/bootstrap/cache
 ```
 
 ### Konfigurasi Nginx
+
 ```bash
 # Buat konfigurasi site
 sudo nano /etc/nginx/sites-available/samztune-up
@@ -133,6 +143,7 @@ sudo systemctl reload nginx
 ```
 
 ### Setup SSL (Let's Encrypt)
+
 ```bash
 # Install Certbot
 sudo apt install certbot python3-certbot-nginx -y
@@ -146,7 +157,9 @@ sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
 ## 🔧 Konfigurasi Production
 
 ### Environment Variables
+
 Edit `.env` file di server dengan:
+
 - Database credentials
 - API keys (Google Maps, HERE Maps, Tripay, Biteship)
 - APP_URL dengan domain Anda
@@ -154,6 +167,7 @@ Edit `.env` file di server dengan:
 - APP_DEBUG=false
 
 ### Cron Job untuk Scheduler (Opsional)
+
 ```bash
 # Setup Laravel scheduler
 crontab -e
@@ -161,6 +175,7 @@ crontab -e
 ```
 
 ### Queue Worker (Jika menggunakan queue)
+
 ```bash
 # Setup supervisor untuk queue
 sudo apt install supervisor -y
@@ -172,31 +187,35 @@ sudo apt install supervisor -y
 ## 🧪 Testing Deploy
 
 1. **Test Basic Functionality**
-   ```bash
-   curl -I https://yourdomain.com
-   ```
+
+    ```bash
+    curl -I https://yourdomain.com
+    ```
 
 2. **Test Database Connection**
-   ```bash
-   php artisan tinker
-   # Test: DB::connection()->getPdo();
-   ```
+
+    ```bash
+    php artisan tinker
+    # Test: DB::connection()->getPdo();
+    ```
 
 3. **Test API Endpoints**
-   - Test Tripay integration
-   - Test Biteship (jika sudah diupgrade)
+    - Test Tripay integration
+    - Test Biteship (jika sudah diupgrade)
 
 ---
 
 ## 🚨 Troubleshooting
 
 ### Common Issues:
+
 1. **500 Error**: Check `.env` file dan permissions
 2. **Database Connection Failed**: Verify DB credentials
 3. **Assets Not Loading**: Run `npm run build` dan check public/build
 4. **Permission Denied**: Fix storage/ dan bootstrap/cache permissions
 
 ### Logs Location:
+
 - Laravel logs: `storage/logs/laravel.log`
 - Nginx logs: `/var/log/nginx/`
 - PHP logs: `/var/log/php8.2-fpm.log`

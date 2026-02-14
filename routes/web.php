@@ -8,7 +8,15 @@ use App\Http\Controllers\Admin\ServiceRateController;
 use App\Http\Controllers\Admin\WebMenuController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PartController;
+use App\Http\Controllers\InstallController;
 use Illuminate\Support\Facades\Route;
+
+// Installer routes (only if not installed)
+Route::prefix('install')->name('install.')->group(function () {
+    Route::get('/', [InstallController::class, 'index'])->name('index');
+    Route::post('/', [InstallController::class, 'install'])->name('install');
+    Route::get('/success', [InstallController::class, 'success'])->name('success');
+});
 
 Route::get('/', [BookingController::class, 'index'])->name('home');
 

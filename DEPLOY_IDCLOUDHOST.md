@@ -3,9 +3,11 @@
 ## 📋 Cek Jenis Hosting Anda
 
 ### **Cloud VPS** (Direkomendasikan)
+
 Jika Anda punya Cloud VPS, ikuti panduan lengkap di bawah.
 
 ### **Cloud Hosting**
+
 Jika shared hosting, gunakan cPanel untuk upload file.
 
 ---
@@ -13,6 +15,7 @@ Jika shared hosting, gunakan cPanel untuk upload file.
 ## ⚡ Deploy ke Cloud VPS IDCloudHost
 
 ### 1. **Akses VPS via SSH**
+
 ```bash
 # Connect ke VPS Anda
 ssh root@IP_VPS_ANDA
@@ -22,6 +25,7 @@ ssh -i private_key root@IP_VPS_ANDA
 ```
 
 ### 2. **Update Sistem**
+
 ```bash
 # Update package list
 apt update && apt upgrade -y
@@ -31,6 +35,7 @@ apt install -y curl wget git unzip software-properties-common
 ```
 
 ### 3. **Install PHP 8.2**
+
 ```bash
 # Add PHP repository
 add-apt-repository ppa:ondrej/php -y
@@ -41,6 +46,7 @@ apt install -y php8.2 php8.2-cli php8.2-fpm php8.2-mysql php8.2-xml php8.2-mbstr
 ```
 
 ### 4. **Install Composer**
+
 ```bash
 # Download dan install Composer
 curl -sS https://getcomposer.org/installer | php
@@ -49,6 +55,7 @@ chmod +x /usr/local/bin/composer
 ```
 
 ### 5. **Install Node.js & NPM**
+
 ```bash
 # Install Node.js 18
 curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
@@ -56,6 +63,7 @@ apt-get install -y nodejs
 ```
 
 ### 6. **Install Nginx**
+
 ```bash
 apt install -y nginx
 systemctl enable nginx
@@ -63,6 +71,7 @@ systemctl start nginx
 ```
 
 ### 7. **Install MySQL**
+
 ```bash
 apt install -y mysql-server
 mysql_secure_installation
@@ -77,6 +86,7 @@ EXIT;
 ```
 
 ### 8. **Clone Repository**
+
 ```bash
 # Buat direktori web
 mkdir -p /var/www
@@ -88,6 +98,7 @@ cd samztune-up
 ```
 
 ### 9. **Setup Aplikasi**
+
 ```bash
 # Install PHP dependencies
 composer install --no-dev --optimize-autoloader
@@ -104,12 +115,15 @@ php artisan key:generate
 ```
 
 ### 10. **Konfigurasi Environment**
+
 Edit file `.env`:
+
 ```bash
 nano .env
 ```
 
 Update dengan konfigurasi Anda:
+
 ```env
 APP_URL=https://yourdomain.com
 DB_DATABASE=samztune_up
@@ -123,6 +137,7 @@ TRIPAY_API_KEY=your_production_triipay_key
 ```
 
 ### 11. **Setup Database**
+
 ```bash
 # Run migrations
 php artisan migrate --seed
@@ -134,6 +149,7 @@ php artisan view:cache
 ```
 
 ### 12. **Setup Permissions**
+
 ```bash
 # Set proper ownership
 chown -R www-data:www-data /var/www/samztune-up
@@ -142,12 +158,14 @@ chmod -R 755 /var/www/samztune-up/bootstrap/cache
 ```
 
 ### 13. **Konfigurasi Nginx**
+
 ```bash
 # Buat konfigurasi site
 nano /etc/nginx/sites-available/samztune-up
 ```
 
 Isi dengan:
+
 ```nginx
 server {
     listen 80;
@@ -182,6 +200,7 @@ server {
 ```
 
 Enable site:
+
 ```bash
 ln -s /etc/nginx/sites-available/samztune-up /etc/nginx/sites-enabled/
 rm /etc/nginx/sites-enabled/default
@@ -190,6 +209,7 @@ systemctl reload nginx
 ```
 
 ### 14. **Setup SSL dengan Let's Encrypt**
+
 ```bash
 # Install Certbot
 apt install -y certbot python3-certbot-nginx
@@ -199,6 +219,7 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
 ```
 
 ### 15. **Setup Firewall**
+
 ```bash
 # Install UFW
 apt install -y ufw
@@ -207,21 +228,57 @@ ufw allow 'Nginx Full'
 ufw --force enable
 ```
 
-### 16. **Test Deployment**
-```bash
-# Test aplikasi
-curl -I https://yourdomain.com
+### **Konfigurasi Nginx untuk Subfolder**
 
-# Check Laravel logs jika ada error
-tail -f /var/www/samztune-up/storage/logs/laravel.log
+Jika ingin aplikasi diakses via `samztekno.com/samztuneup/`, gunakan konfigurasi berikut:
+
+```bash
+# Copy konfigurasi subfolder
+cp nginx-subfolder.conf /etc/nginx/sites-available/samztune-up-subfolder
+
+# Enable site
+ln -s /etc/nginx/sites-available/samztune-up-subfolder /etc/nginx/sites-enabled/
+
+# Test dan reload
+nginx -t
+systemctl reload nginx
 ```
 
----
+### **Setup SSL untuk Subfolder**
 
-## 🔧 Troubleshooting IDCloudHost
+```bash
+# Install SSL untuk domain utama
+certbot --nginx -d samztekno.com -d www.samztekno.com
+```
+
+### **Update Environment**
+
+Edit `.env` di server:
+
+```bash
+nano /var/www/samztune-up/.env
+```
+
+Update:
+
+```env
+APP_URL=https://samztekno.com/samztuneup
+```
+
+### **Akses Installer**
+
+Setelah setup, akses installer di:
+
+```
+https://samztekno.com/samztuneup/install
+```
+
+Installer akan memandu setup database dan konfigurasi awal.
 
 ### **Memory Limit PHP**
+
 Jika dapat error memory:
+
 ```bash
 # Edit php.ini
 nano /etc/php/8.2/fpm/php.ini
@@ -233,6 +290,7 @@ systemctl restart php8.2-fpm
 ```
 
 ### **Permission Issues**
+
 ```bash
 # Fix storage permissions
 chown -R www-data:www-data /var/www/samztune-up/storage
@@ -240,7 +298,9 @@ chmod -R 775 /var/www/samztune-up/storage
 ```
 
 ### **Database Connection**
+
 Pastikan MySQL service running:
+
 ```bash
 systemctl status mysql
 systemctl start mysql
@@ -251,6 +311,7 @@ systemctl start mysql
 ## 📞 Support IDCloudHost
 
 Jika ada masalah dengan server IDCloudHost:
+
 - **Panel Control**: Login ke panel.idcloudhost.com
 - **Support Ticket**: Buat ticket di panel
 - **Live Chat**: Tersedia 24/7
