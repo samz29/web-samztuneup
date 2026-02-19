@@ -14,7 +14,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register console commands when running in CLI
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \App\Console\Commands\AppInstallCommand::class,
+            ]);
+        }
     }
 
     /**
