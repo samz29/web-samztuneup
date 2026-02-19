@@ -25,6 +25,37 @@
                             </div>
                         @endif
 
+                        @if(isset($requirements))
+                            <div class="mb-3">
+                                <h6 class="mb-2">🔍 System requirements</h6>
+                                <ul class="list-group mb-2">
+                                    @foreach($requirements['checks'] as $check)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <strong>{{ $check['label'] }}</strong>
+                                                @if(!empty($check['value']))
+                                                    <div class="small text-muted">Current: {{ $check['value'] }}</div>
+                                                @endif
+                                                @if(!empty($check['help']))
+                                                    <div class="small text-muted">{{ $check['help'] }}</div>
+                                                @endif
+                                            </div>
+                                            @if($check['ok'])
+                                                <span class="badge bg-success">OK</span>
+                                            @elseif($check['critical'])
+                                                <span class="badge bg-danger">Missing</span>
+                                            @else
+                                                <span class="badge bg-warning">Warning</span>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                @if(! $requirements['all_ok'])
+                                    <div class="alert alert-warning">Beberapa requirement penting belum terpenuhi — perbaiki sebelum melanjutkan instalasi.</div>
+                                @endif
+                            </div>
+                        @endif
+
                         <form method="POST" action="{{ url('/install') }}">
                             @csrf
 
@@ -69,7 +100,7 @@
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">
+                                <button type="submit" class="btn btn-primary btn-lg" @if(isset($requirements) && ! $requirements['all_ok']) disabled title="Perbaiki requirement terlebih dahulu" @endif>
                                     🚀 Install Sekarang
                                 </button>
                             </div>

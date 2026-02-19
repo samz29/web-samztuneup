@@ -16,7 +16,10 @@ class InstallController extends Controller
             return redirect('/')->with('info', 'Aplikasi sudah terinstall!');
         }
 
-        return view('install.index');
+        // Run pre-installation requirement checks and pass results to view
+        $requirements = $this->checkRequirements();
+
+        return view('install.index', compact('requirements'));
     }
 
     public function install(Request $request)
@@ -79,6 +82,70 @@ class InstallController extends Controller
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Pre-installation requirement checks.
+     * Returns array: ['checks' => [...], 'all_ok' => bool]
+     */
+    private function checkRequirements()
+    {
+        $checks = [];
+
+        // PHP version
+        $phpOk = version_compare(PHP_VERSION, '8.2.0', '>=');
+        $checks[] = [
+            'key' => 'php_version',
+            'label' => 'PHP >= 8.2',
+            'ok' => $phpOk,
+            'critical' => true,
+            'value' => PHP_VERSION,
+            'help' => $phpOk ? '' : 'Upgrade PHP ke versi 8.2 atau lebih baru.'
+        ];
+
+        // Required PHP extensions
+        $requiredExt = ['fileinfo','gd','mbstring','openssl','tokenizer','xml','ctype','json','pdo_mysql'];
+        foreach ($requiredExt as $ext) {
+            $loaded = extension_loaded($ext);
+            $checks[] = [
+                'key' => 'ext_'.$ext,
+                'label' => "PHP extension: {$ext}",
+                'ok' => $loaded,
+                'critical' => in_array($ext, ['fileinfo','pdo_mysql','mbstring','openssl','gd']),
+                'help' => $loaded ? '' : "Aktifkan ekstensi PHP: {$ext}"
+            ];
+        }
+
+        // Writable directories
+        $paths = [storage_path('app'), storage_path('framework'), storage_path('logs'), base_path('bootstrap/cache')];
+        foreach ($paths as $p) {
+            $ok = is_dir($p) && is_writable($p);
+            $checks[] = [
+                'key' => 'writable_'.md5($p),
+                'label' => 'Writable: '.str_replace(base_path(), '', $p),
+                'ok' => $ok,
+                'critical' => true,
+                'help' => $ok ? '' : "Beri permission writable pada: {$p}"
+            ];
+        }
+
+        // public/storage symlink
+        $publicStorage = public_path('storage');
+        $symlinkOk = is_link($publicStorage) && file_exists($publicStorage);
+        $checks[] = [
+            'key' => 'public_storage',
+            'label' => 'Storage symlink (public/storage)',
+            'ok' => $symlinkOk,
+            'critical' => false,
+            'help' => $symlinkOk ? '' : 'Jalankan: php artisan storage:link setelah instalasi'
+        ];
+
+        $allOk = true;
+        foreach ($checks as $c) {
+            if ($c['critical'] && ! $c['ok']) { $allOk = false; break; }
+        }
+
+        return ['checks' => $checks, 'all_ok' => $allOk];
     }
 
     private function updateEnvFile($data)
