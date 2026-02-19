@@ -122,7 +122,7 @@ echo "✅ Storage directories created"
 echo "6. Testing application..."
 sleep 2
 
-if curl -s http://samztekno.com/samztuneup/ | grep -q "SamzTune"; then
+if curl -s http://samztekno.com/ | grep -q "SamzTune"; then
     echo "✅ Application is accessible!"
 else
     echo "⚠️ Application may still have issues"
@@ -135,5 +135,5 @@ echo ""
 echo "==============================="
 echo "Fix script completed!"
 echo ""
-echo "Try accessing: http://samztekno.com/samztuneup/"
-echo "Or installer: http://samztekno.com/samztuneup/install"
+echo "Try accessing: http://samztekno.com/"
+echo "Or installer: http://samztekno.com/install"

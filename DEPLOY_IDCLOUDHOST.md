@@ -112,6 +112,9 @@ cp .env.production .env
 
 # Generate application key
 php artisan key:generate
+
+# Create storage symlink (PENTING untuk gambar)
+php artisan storage:link
 ```
 
 ### 10. **Konfigurasi Environment**
@@ -125,7 +128,7 @@ nano .env
 Update dengan konfigurasi Anda:
 
 ```env
-APP_URL=https://yourdomain.com
+APP_URL=https://samztekno.com
 DB_DATABASE=samztune_up
 DB_USERNAME=samztune_user
 DB_PASSWORD=your_strong_password
@@ -169,7 +172,7 @@ Isi dengan:
 ```nginx
 server {
     listen 80;
-    server_name yourdomain.com www.yourdomain.com;
+    server_name samztekno.com www.samztekno.com;
     root /var/www/samztune-up/public;
     index index.php index.html index.htm;
 
@@ -215,7 +218,7 @@ systemctl reload nginx
 apt install -y certbot python3-certbot-nginx
 
 # Generate SSL certificate
-certbot --nginx -d yourdomain.com -d www.yourdomain.com
+certbot --nginx -d samztekno.com -d www.samztekno.com
 ```
 
 ### 15. **Setup Firewall**

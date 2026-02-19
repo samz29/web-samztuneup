@@ -22,7 +22,7 @@ Update otomatis setiap jam/jam tertentu.
 
 ```bash
 # Di server Anda
-cd /home/samztekn/samztuneup
+cd /var/www/samztune-up
 
 # Download script dari GitHub
 wget https://raw.githubusercontent.com/samz29/web-samztuneup/main/update.sh
@@ -117,13 +117,13 @@ crontab -e
 
 ```bash
 # Update setiap jam pada jam kerja (9-17)
-0 9-17 * * 1-5 /home/samztekn/samztuneup/update.sh main
+0 9-17 * * 1-5 /var/www/samztune-up/update.sh main
 
 # Update setiap 6 jam
-0 */6 * * * /home/samztekn/samztuneup/update.sh main
+0 */6 * * * /var/www/samztune-up/update.sh main
 
 # Update setiap hari jam 2 pagi
-0 2 * * * /home/samztekn/samztuneup/update.sh main
+0 2 * * * /var/www/samztune-up/update.sh main
 ```
 
 ---
@@ -137,7 +137,7 @@ Pastikan `.env` production sudah benar:
 ```env
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://samztekno.com/samztuneup
+APP_URL=https://samztekno.com
 
 # Database
 DB_HOST=localhost

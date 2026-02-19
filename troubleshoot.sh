@@ -62,6 +62,15 @@ if [ -d "$APP_DIR" ]; then
         echo "❌ index.php not found"
     fi
 
+    # Check storage symlink
+    if [ -L "$APP_DIR/public/storage" ]; then
+        echo "✅ Storage symlink exists"
+    else
+        echo "❌ Storage symlink missing"
+        echo "Fixing symlink..."
+        cd $APP_DIR && php artisan storage:link
+    fi
+
 else
     echo "❌ Application directory does not exist: $APP_DIR"
 fi
@@ -118,8 +127,8 @@ fi
 echo ""
 echo "7. Testing URL access..."
 if command -v curl >/dev/null 2>&1; then
-    echo "Testing http://samztekno.com/samztuneup/ ..."
-    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://samztekno.com/samztuneup/ 2>/dev/null || echo "000")
+    echo "Testing http://samztekno.com/ ..."
+    RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://samztekno.com/ 2>/dev/null || echo "000")
     if [ "$RESPONSE" = "200" ]; then
         echo "✅ URL returns 200 OK"
     elif [ "$RESPONSE" = "404" ]; then

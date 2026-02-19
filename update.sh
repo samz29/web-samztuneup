@@ -6,11 +6,14 @@
 
 set -e
 
+APP_DIR="/var/www/samztune-up"
 BRANCH=${1:-main}
-BACKUP_DIR="/home/samztekn/backups/$(date +%Y%m%d_%H%M%S)"
+BACKUP_DIR="/var/www/backups/$(date +%Y%m%d_%H%M%S)"
 
 echo "🚀 Updating SamzTune-Up from GitHub ($BRANCH branch)"
 echo "==================================================="
+
+cd "$APP_DIR"
 
 # Colors
 RED='\033[0;31m'
@@ -31,18 +34,39 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+backup_database() {
+    print_status "Backing up database..."
+    if ! command -v mysqldump &> /dev/null; then
+        print_warning "mysqldump command not found. Skipping database backup."
+        return
+    fi
+
+    if [ -z "$DB_DATABASE" ] || [ -z "$DB_USERNAME" ] || [ -z "$DB_PASSWORD" ]; then
+        print_warning "DB credentials (DB_DATABASE, DB_USERNAME, DB_PASSWORD) not found in .env. Skipping database backup."
+        return
+    fi
+
+    mkdir -p "$BACKUP_DIR/database"
+    export MYSQL_PWD="$DB_PASSWORD"
+    mysqldump -u "$DB_USERNAME" "$DB_DATABASE" | gzip > "$BACKUP_DIR/database/$DB_DATABASE-$(date +%Y%m%d_%H%M%S).sql.gz"
+    unset MYSQL_PWD
+    print_status "Database backup completed: $BACKUP_DIR/database/"
+}
+
 backup_current() {
-    print_status "Creating backup..."
+    print_status "Backing up application files..."
     mkdir -p "$BACKUP_DIR"
-    cp -r /home/samztekn/samztuneup/.env "$BACKUP_DIR/" 2>/dev/null || true
-    cp -r /home/samztekn/samztuneup/storage/app/* "$BACKUP_DIR/storage/" 2>/dev/null || true
-    print_status "Backup created at: $BACKUP_DIR"
+    # Backup .env and public storage
+    cp .env "$BACKUP_DIR/.env.bak"
+    if [ -d "storage/app/public" ]; then
+        mkdir -p "$BACKUP_DIR/storage"
+        cp -r storage/app/public/* "$BACKUP_DIR/storage/" 2>/dev/null || true
+    fi
+    print_status "Files backed up to: $BACKUP_DIR"
 }
 
 update_from_git() {
     print_status "Pulling latest changes from GitHub..."
-
-    cd /home/samztekn/samztuneup
 
     # Stash any local changes
     git stash push -m "Auto backup before update $(date)" 2>/dev/null || true
@@ -129,7 +153,7 @@ test_deployment() {
     fi
 
     # Test HTTP response
-    if curl -s -o /dev/null -w "%{http_code}" http://localhost/samztuneup/ | grep -q "200\|301\|302"; then
+    if curl -s -I -o /dev/null -w "%{http_code}" https://samztekno.com/ | grep -q "200\|301\|302"; then
         print_status "HTTP test passed"
     else
         print_warning "HTTP test failed - check web server configuration"
@@ -139,7 +163,7 @@ test_deployment() {
 rollback() {
     print_warning "Rolling back to previous version..."
     if [ -d "$BACKUP_DIR" ]; then
-        cp "$BACKUP_DIR/.env" /home/samztekn/samztuneup/ 2>/dev/null || true
+        cp "$BACKUP_DIR/.env.bak" "$APP_DIR/.env" 2>/dev/null || true
         print_status "Rollback completed"
     else
         print_error "No backup found for rollback"
@@ -151,7 +175,13 @@ trap 'print_error "Deployment failed! Rolling back..."; rollback; exit 1' ERR
 
 # Main deployment process
 main() {
+    # Load environment variables from .env file
+    if [ -f .env ]; then
+        export $(grep -v '^#' .env | xargs)
+    fi
+
     backup_current
+    backup_database
     update_from_git
     install_dependencies
     setup_laravel
@@ -161,7 +191,7 @@ main() {
 
     print_status "🎉 Deployment completed successfully!"
     print_status "Backup location: $BACKUP_DIR"
-    print_status "URL: https://samztekno.com/samztuneup"
+    print_status "URL: https://samztekno.com"
 }
 
 # Run main function
