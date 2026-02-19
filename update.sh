@@ -160,6 +160,51 @@ test_deployment() {
     fi
 }
 
+# Run installer automatically when app is not installed yet
+run_installer_if_needed() {
+    # If sentinel file exists, assume installed
+    if [ -f storage/framework/installed ]; then
+        print_status "Application already installed (sentinel found)"
+        return
+    fi
+
+    # Try to detect via migrations table: if no migrations, treat as not installed
+    if php artisan migrate:status 2>&1 | grep -q "No migrations found"; then
+        print_status "No migrations found — will run installer"
+    else
+        # If migrate:status succeeded and migrations exist, assume installed
+        print_status "Migrations detected — skipping auto-installer"
+        return
+    fi
+
+    # Determine admin credentials from .env or generate
+    ADMIN_EMAIL=$(grep -E '^ADMIN_EMAIL=' .env 2>/dev/null | cut -d'=' -f2 | tr -d '"')
+    ADMIN_PASSWORD=$(grep -E '^ADMIN_PASSWORD=' .env 2>/dev/null | cut -d'=' -f2 | tr -d '"')
+
+    if [ -z "$ADMIN_EMAIL" ]; then
+        ADMIN_EMAIL=admin@samztekno.com
+    fi
+    if [ -z "$ADMIN_PASSWORD" ]; then
+        if command -v openssl >/dev/null 2>&1; then
+            ADMIN_PASSWORD=$(openssl rand -base64 12)
+        else
+            ADMIN_PASSWORD="$(date +%s)$(head -c 6 /dev/urandom | sha1sum | cut -c1-6)"
+        fi
+        echo "Generated admin credentials: $ADMIN_EMAIL / $ADMIN_PASSWORD" >> "$BACKUP_DIR/install-admin.txt"
+    fi
+
+    print_status "Running non-interactive installer (admin: $ADMIN_EMAIL)"
+    php artisan app:install --admin-email="$ADMIN_EMAIL" --admin-password="$ADMIN_PASSWORD" --force || print_error "Auto-installer failed"
+
+    # Ensure sentinel file exists
+    if [ ! -f storage/framework/installed ]; then
+        echo "$(date -u) - installed by update.sh" > storage/framework/installed || true
+    fi
+
+    print_status "Auto-installer finished (credentials logged to $BACKUP_DIR/install-admin.txt if generated)"
+}
+
+
 rollback() {
     print_warning "Rolling back to previous version..."
     if [ -d "$BACKUP_DIR" ]; then
@@ -185,6 +230,8 @@ main() {
     update_from_git
     install_dependencies
     setup_laravel
+    # Run installer automatically if application is not yet installed
+    run_installer_if_needed
     set_permissions
     restart_services
     test_deployment

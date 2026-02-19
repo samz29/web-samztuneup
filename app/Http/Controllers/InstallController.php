@@ -62,6 +62,13 @@ class InstallController extends Controller
             Artisan::call('route:clear');
             Artisan::call('view:clear');
 
+            // Create installed sentinel file so auto-deploy can detect installation
+            try {
+                file_put_contents(storage_path('framework/installed'), now()->toDateTimeString());
+            } catch (\Exception $e) {
+                // ignore write failures
+            }
+
             return redirect('/install/success');
 
         } catch (\Exception $e) {
@@ -77,7 +84,12 @@ class InstallController extends Controller
     private function isInstalled()
     {
         try {
-            // Check if migrations table exists and has records
+            // Prefer sentinel file check
+            if (file_exists(storage_path('framework/installed'))) {
+                return true;
+            }
+
+            // Fallback: Check if migrations table exists and has records
             return Schema::hasTable('migrations') && DB::table('migrations')->count() > 0;
         } catch (\Exception $e) {
             return false;
