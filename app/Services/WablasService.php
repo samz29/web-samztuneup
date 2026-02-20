@@ -10,11 +10,13 @@ class WablasService
     protected ?string $key;
     protected ?string $from;
     protected ?string $userKey;
+    protected ?string $secretKey;
 
     public function __construct()
     {
         $this->url = config('services.wablas.url');
         $this->key = config('services.wablas.key');
+        $this->secretKey = config('services.wablas.secret_key');
         $this->from = config('services.wablas.from');
         $this->userKey = config('services.wablas.user_key');
     }
@@ -28,7 +30,12 @@ class WablasService
      */
     public function send(string $to, string $message, bool $forUser = false): bool
     {
+        // choose appropriate credential; secret_key may be required by some endpoints
         $apiKey = $forUser && $this->userKey ? $this->userKey : $this->key;
+        if (empty($apiKey) && !empty($this->secretKey)) {
+            $apiKey = $this->secretKey;
+        }
+
         if (empty($apiKey) || empty($to) || empty($this->url)) {
             return false;
         }
