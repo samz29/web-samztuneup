@@ -575,3 +575,55 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bookingForm');
+    if (!form) return;
+
+    function showAlert(message) {
+        let existing = document.getElementById('bookingValidationAlert');
+        if (existing) existing.remove();
+        const wrapper = document.createElement('div');
+        wrapper.id = 'bookingValidationAlert';
+        wrapper.className = 'alert alert-danger alert-dismissible fade show';
+        wrapper.role = 'alert';
+        wrapper.innerHTML = message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+        form.parentNode.insertBefore(wrapper, form);
+        wrapper.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
+
+    form.addEventListener('submit', function(e) {
+        const requiredFields = [
+            'customer_name','customer_phone','customer_email','customer_address',
+            'customer_city','customer_district','customer_postal_code',
+            'motor_type','motor_brand','motor_year','service_type','booking_date'
+        ];
+
+        const missing = [];
+        requiredFields.forEach(function(name) {
+            const el = document.querySelector('[name="'+name+'"]');
+            if (!el) return;
+            const val = (el.value || '').toString().trim();
+            if (val === '' || val === '0') missing.push(name.replace('_',' '));
+        });
+
+        // check lat/lng
+        const lat = parseFloat(document.getElementById('latitude').value || 0);
+        const lng = parseFloat(document.getElementById('longitude').value || 0);
+        if (!lat || !lng) {
+            missing.push('lokasi (geser pin pada peta)');
+        }
+
+        if (missing.length) {
+            e.preventDefault();
+            showAlert('Mohon isi terlebih dahulu: ' + missing.join(', '));
+            return false;
+        }
+
+        return true;
+    });
+});
+</script>
+@endpush
