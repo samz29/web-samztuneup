@@ -112,11 +112,11 @@
                         <tbody>
                             @forelse($recentBookings as $booking)
                             <tr>
-                                <td>{{ $booking->user->name ?? 'N/A' }}</td>
-                                <td>{{ $booking->callFee->name ?? 'N/A' }}</td>
+                                <td>{{ $booking->customer_name }}</td>
+                                <td>{{ $booking->service_type_label }}</td>
                                 <td>
-                                    <span class="badge badge-{{ $booking->status == 'pending' ? 'warning' : ($booking->status == 'completed' ? 'success' : 'info') }}">
-                                        {{ ucfirst($booking->status) }}
+                                    <span class="badge badge-{{ $booking->status == 'completed' ? 'success' : ($booking->status == 'cancelled' ? 'danger' : 'info') }}">
+                                        {{ $booking->status_label }}
                                     </span>
                                 </td>
                                 <td>{{ $booking->created_at->format('M d, Y') }}</td>

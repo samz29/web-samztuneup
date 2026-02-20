@@ -139,8 +139,8 @@ class BookingController extends Controller
     public function update(Request $request, Booking $booking)
     {
         $request->validate([
-            'status' => 'required|in:pending,confirmed,completed,cancelled',
-            'payment_status' => 'required|in:pending,paid,failed',
+            'status' => 'required|in:new,confirmed,on_the_way,in_progress,completed,cancelled',
+            'payment_status' => 'required|in:pending,paid,failed,cancelled',
             'notes' => 'nullable|string',
         ]);
 

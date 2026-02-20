@@ -167,7 +167,7 @@ class BookingController extends Controller
             // Jika pembayaran Tripay, buat transaksi
             if ($request->payment_method === 'tripay') {
                 $paymentData = [
-                    'payment_method' => $request->tripay_channel,
+                    'method' => $request->tripay_channel,
                     'merchant_ref' => $booking->booking_code,
                     'amount' => $booking->total_amount,
                     'merchant_code' => config('services.tripay.merchant_code'),
@@ -212,7 +212,7 @@ class BookingController extends Controller
             }
 
             if ($request->payment_method === 'dp') {
-                return redirect()->route('booking.dp', $booking->booking_code)
+                return redirect()->route('booking.success', $booking->booking_code)
                     ->with('success', 'Booking berhasil! Silakan lakukan pembayaran DP untuk konfirmasi.');
             }
 
