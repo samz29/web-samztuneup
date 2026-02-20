@@ -34,6 +34,10 @@
                                 <td>{{ $user->email }}</td>
                             </tr>
                             <tr>
+                                <th>Phone:</th>
+                                <td>{{ $user->phone ?: '-' }}</td>
+                            </tr>
+                            <tr>
                                 <th>Email Verified:</th>
                                 <td>
                                     @if($user->email_verified_at)

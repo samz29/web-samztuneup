@@ -20,6 +20,7 @@
                         <th>ID</th>
                         <th>Name</th>
                         <th>Email</th>
+                        <th>Phone</th>
                         <th>Email Verified</th>
                         <th>Joined Date</th>
                         <th>Actions</th>
@@ -32,6 +33,7 @@
                         <td>
                             <strong>{{ $user->name }}</strong>
                         </td>
+                        <td>{{ $user->phone }}</td>
                         <td>{{ $user->email }}</td>
                         <td>
                             @if($user->email_verified_at)
