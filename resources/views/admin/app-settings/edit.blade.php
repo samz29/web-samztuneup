@@ -40,7 +40,7 @@
                         @elseif($setting->type === 'file')
                             @if($setting->value)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/' . $setting->value) }}" alt="{{ $setting->key }}" class="img-thumbnail" style="max-width: 200px;">
+                                    <img src="{{ asset('storage/app/public/' . $setting->value) }}" alt="{{ $setting->key }}" class="img-thumbnail" style="max-width: 200px;">
                                     <small class="form-text text-muted">Current file: {{ $setting->value }}</small>
                                 </div>
                             @endif

@@ -11,7 +11,7 @@
 
     <!-- Favicon -->
     @if(App\Models\AppSetting::getValue('site_favicon'))
-        <link rel="icon" type="image/x-icon" href="{{ asset('storage/' . App\Models\AppSetting::getValue('site_favicon')) }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset('storage/app/public/' . App\Models\AppSetting::getValue('site_favicon')) }}">
     @else
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     @endif
@@ -47,7 +47,7 @@
             <div class="container-fluid">
                 <a class="navbar-brand d-flex align-items-center text-warning fw-bold" href="{{ url('/') }}">
                     @if(App\Models\AppSetting::getValue('site_logo'))
-                        <img src="{{ asset('storage/' . App\Models\AppSetting::getValue('site_logo')) }}" alt="Logo" style="height: 80px; width: auto; max-width: 250px; object-fit: contain; margin-right: 20px;">
+                        <img src="{{ asset('storage/app/public/' . App\Models\AppSetting::getValue('site_logo')) }}" alt="Logo" style="height: 80px; width: auto; max-width: 250px; object-fit: contain; margin-right: 20px;">
                     @else
                         <i class="fas fa-motorcycle fa-lg me-2 text-warning"></i>
                     @endif

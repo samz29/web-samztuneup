@@ -30,7 +30,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="d-flex mb-3">
-                                            <img src="{{ asset('storage/' . $part->image) }}" class="rounded me-3" alt="{{ $part->name }}" style="width: 60px; height: 60px; object-fit: cover;">
+                                            <img src="{{ asset('storage/app/public/' . $part->image) }}" class="rounded me-3" alt="{{ $part->name }}" style="width: 60px; height: 60px; object-fit: cover;">
                                             <div>
                                                 <h6 class="mb-1">{{ $part->name }}</h6>
                                                 <p class="text-muted small mb-1">{{ Str::limit($part->description, 40) }}</p>

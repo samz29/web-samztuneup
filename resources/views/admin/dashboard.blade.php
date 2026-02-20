@@ -250,7 +250,7 @@
                         <small class="text-muted">Upload logo website (PNG, JPG, JPEG, GIF, SVG - Max 2MB)</small>
                         @if(\App\Models\AppSetting::getValue('site_logo'))
                             <div class="mt-2">
-                                <img src="{{ asset('storage/' . \App\Models\AppSetting::getValue('site_logo')) }}" alt="Current Logo" style="max-height: 50px;">
+                                <img src="{{ asset('storage/app/public/' . \App\Models\AppSetting::getValue('site_logo')) }}" alt="Current Logo" style="max-height: 50px;">
                                 <small class="text-muted d-block">Logo saat ini</small>
                             </div>
                         @endif
@@ -261,7 +261,7 @@
                         <small class="text-muted">Upload favicon (PNG, JPG, JPEG, GIF, ICO - Max 1MB)</small>
                         @if(\App\Models\AppSetting::getValue('site_favicon'))
                             <div class="mt-2">
-                                <img src="{{ asset('storage/' . \App\Models\AppSetting::getValue('site_favicon')) }}" alt="Current Favicon" style="max-height: 32px;">
+                                <img src="{{ asset('storage/app/public/' . \App\Models\AppSetting::getValue('site_favicon')) }}" alt="Current Favicon" style="max-height: 32px;">
                                 <small class="text-muted d-block">Favicon saat ini</small>
                             </div>
                         @endif

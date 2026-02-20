@@ -13,7 +13,7 @@
                     <div class="carousel-item @if($i === 0) active @endif">
                         <div class="d-flex flex-column flex-md-row align-items-center bg-dark text-white p-4 p-md-5 rounded-4">
                             @if($slider->image)
-                                <img src="{{ asset('storage/' . $slider->image) }}" alt="{{ $slider->title }}" class="img-fluid me-md-4 mb-3 mb-md-0 shadow-lg" style="max-width:340px; max-height:180px; object-fit:cover; border-radius:16px;">
+                                <img src="{{ asset('storage/app/public/' . $slider->image) }}" alt="{{ $slider->title }}" class="img-fluid me-md-4 mb-3 mb-md-0 shadow-lg" style="max-width:340px; max-height:180px; object-fit:cover; border-radius:16px;">
                             @endif
                             <div>
                                 <h3 class="fw-bold mb-2 display-6">{{ $slider->title }}</h3>
@@ -168,7 +168,19 @@
         <div class="row g-3 justify-content-center">
             @forelse($galleries as $gallery)
                 <div class="col-6 col-md-4 col-lg-3">
-                    <img src="{{ asset('storage/' . $gallery->image) }}" class="img-fluid rounded-4 shadow-sm" alt="{{ $gallery->caption }}">
+                    @php
+                        // prefer explicit public_html/storage/app/public location per request
+                        $imgPath = 'storage/app/public/' . $gallery->image;
+
+                        if (! (
+                            file_exists(public_path($imgPath)) ||
+                            file_exists(storage_path('app/public/' . $gallery->image))
+                        )) {
+                            // fallback placeholder
+                            $imgPath = 'storage/app/public/logos/default.png';
+                        }
+                    @endphp
+                    <img src="{{ asset($imgPath) }}" class="img-fluid rounded-4 shadow-sm" alt="{{ $gallery->caption }}">
                     @if($gallery->caption)
                         <div class="small text-center text-muted mt-1">{{ $gallery->caption }}</div>
                     @endif
@@ -187,7 +199,7 @@
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card h-100 border-0 shadow-sm">
                         <div class="card-body text-center p-3">
-                            <img src="{{ asset('storage/' . $sponsor->image) }}" class="img-fluid rounded-3" alt="{{ $sponsor->name }}" style="max-height: 120px; object-fit: contain;">
+                            <img src="{{ asset('storage/app/public/' . $sponsor->image) }}" class="img-fluid rounded-3" alt="{{ $sponsor->name }}" style="max-height: 120px; object-fit: contain;">
                             <h6 class="mt-2 mb-0">{{ $sponsor->name }}</h6>
                         </div>
                     </div>
@@ -205,7 +217,7 @@
             @forelse($parts as $part)
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card h-100 shadow-sm">
-                        <img src="{{ asset('storage/' . $part->image) }}" class="card-img-top rounded-top" alt="{{ $part->name }}" style="height: 180px; object-fit: cover;">
+                        <img src="{{ asset('storage/app/public/' . $part->image) }}" class="card-img-top rounded-top" alt="{{ $part->name }}" style="height: 180px; object-fit: cover;">
                         <div class="card-body d-flex flex-column">
                             <h6 class="card-title">{{ $part->name }}</h6>
                             @if($part->description)
