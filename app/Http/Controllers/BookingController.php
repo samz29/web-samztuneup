@@ -164,10 +164,21 @@ class BookingController extends Controller
                 'payment_status' => $request->payment_method === 'cod' ? 'pending' : 'pending',
             ]);
 
+            // Send immediate confirmation to customer via Wablas (best-effort)
+            try {
+                $wablas = app(\App\Services\WablasService::class);
+                $msg = "Terima kasih! Booking Anda (" . $booking->booking_code . ") telah diterima. "
+                    . "Cek status di: " . url(route('booking.track', ['booking_code' => $booking->booking_code], false));
+                $wablas->send($booking->customer_phone, $msg, true);
+            } catch (\Exception $e) {
+                Log::warning('Wablas customer notify failed: ' . $e->getMessage());
+            }
+
             // Jika pembayaran Tripay, buat transaksi
             if ($request->payment_method === 'tripay') {
                 $paymentData = [
-                    'payment_method' => $request->tripay_channel,
+                    // Tripay expects 'method' key
+                    'method' => $request->tripay_channel,
                     'merchant_ref' => $booking->booking_code,
                     'amount' => $booking->total_amount,
                     'merchant_code' => config('services.tripay.merchant_code'),
