@@ -26,8 +26,20 @@
                         </div>
                     @endif
 
-                    <form id="bookingForm" action="{{ route('booking.store') }}" method="POST">
-                        @csrf
+                    {{-- Show booking form only to authenticated users. Guests get a prompt to login/register. --}}
+                    @auth
+                        <form id="bookingForm" action="{{ route('booking.store') }}" method="POST">
+                            @csrf
+                    @endauth
+
+                    @guest
+                        <div class="alert alert-warning">
+                            <h5 class="mb-1"><i class="fas fa-info-circle me-2"></i>Silakan Login atau Daftar</h5>
+                            <p class="mb-2">Untuk membuat booking, silakan login terlebih dahulu atau buat akun baru.</p>
+                            <a href="{{ route('login') }}" class="btn btn-primary me-2">Login</a>
+                            <a href="{{ route('register') }}" class="btn btn-outline-primary">Daftar</a>
+                        </div>
+                    @endguest
 
                         <!-- Customer Information -->
                         <div class="card mb-4">
@@ -310,14 +322,24 @@
 
                         <!-- Submit Button -->
                         <div class="d-grid gap-2">
-                            <button type="submit" id="submitBtn" class="btn btn-primary btn-lg" disabled>
-                                <i class="fas fa-calendar-check me-2"></i>Booking Sekarang (Rp 0)
-                            </button>
+                            @auth
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg" disabled>
+                                    <i class="fas fa-calendar-check me-2"></i>Booking Sekarang (Rp 0)
+                                </button>
+                            @else
+                                <button type="button" class="btn btn-primary btn-lg" disabled>
+                                    <i class="fas fa-calendar-check me-2"></i>Booking Sekarang (Login required)
+                                </button>
+                            @endauth
+
                             <a href="{{ route('home') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left me-2"></i>Kembali ke Beranda
                             </a>
                         </div>
-                    </form>
+
+                    @auth
+                        </form>
+                    @endauth
                 </div>
             </div>
         </div>

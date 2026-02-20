@@ -12,8 +12,10 @@ use App\Models\Part;
 use App\Services\LocationService;
 use App\Services\TripayService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
 class BookingController extends Controller
@@ -124,6 +126,10 @@ class BookingController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $validator->sometimes('tripay_channel', 'required|string', function ($input) {
+            return $input->payment_method === 'tripay';
+        });
+
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
@@ -138,6 +144,8 @@ class BookingController extends Controller
             }
 
             $booking = Booking::create([
+                'booking_code' => 'BK-' . strtoupper(Str::random(10)),
+                'user_id' => Auth::id(),
                 'customer_name' => $request->customer_name,
                 'customer_phone' => $request->customer_phone,
                 'customer_email' => $request->customer_email,

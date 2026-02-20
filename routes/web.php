@@ -21,13 +21,18 @@ Route::prefix('install')->name('install.')->group(function () {
 Route::get('/', [BookingController::class, 'index'])->name('home');
 
 Route::prefix('booking')->name('booking.')->group(function () {
-    Route::get('/create', [BookingController::class, 'create'])->name('create');
-    Route::post('/calculate-fee', [BookingController::class, 'calculateFee'])->name('calculate.fee');
-    Route::post('/store', [BookingController::class, 'store'])->name('store');
-    Route::get('/payment/{bookingCode}', [BookingController::class, 'payment'])->name('payment');
-    Route::get('/success/{bookingCode}', [BookingController::class, 'success'])->name('success');
-    Route::get('/track', [BookingController::class, 'track'])->name('track');
+    // Public webhook for Tripay callbacks
     Route::post('/webhook/tripay', [BookingController::class, 'webhook'])->name('webhook');
+
+    // Routes that require authentication (users must login/register first)
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/create', [BookingController::class, 'create'])->name('create');
+        Route::post('/calculate-fee', [BookingController::class, 'calculateFee'])->name('calculate.fee');
+        Route::post('/store', [BookingController::class, 'store'])->name('store');
+        Route::get('/payment/{bookingCode}', [BookingController::class, 'payment'])->name('payment');
+        Route::get('/success/{bookingCode}', [BookingController::class, 'success'])->name('success');
+        Route::get('/track', [BookingController::class, 'track'])->name('track');
+    });
 });
 
 // Parts routes
