@@ -167,8 +167,17 @@ class BookingController extends Controller
             // Send immediate confirmation to customer via Wablas (best-effort)
             try {
                 $wablas = app(\App\Services\WablasService::class);
-                $msg = "Terima kasih! Booking Anda (" . $booking->booking_code . ") telah diterima. "
-                    . "Cek status di: " . url(route('booking.track', ['booking_code' => $booking->booking_code], false));
+                $amount = number_format($booking->total_amount, 0, ',', '.');
+                $bookingDate = $booking->booking_date instanceof \Illuminate\Support\Carbon ? $booking->booking_date->format('d-m-Y H:i') : date('d-m-Y H:i', strtotime($booking->booking_date));
+                $msg = "Halo " . $booking->customer_name . ",\n\n" .
+                    "Terima kasih telah melakukan booking di SamzTune-UP.\n" .
+                    "Kode Booking: " . $booking->booking_code . "\n" .
+                    "Layanan: " . $booking->service_type_label . "\n" .
+                    "Tanggal: " . $bookingDate . "\n" .
+                    "Total: Rp " . $amount . "\n\n" .
+                    "Teknisi akan menghubungi Anda. Cek status: " . url(route('booking.track', ['booking_code' => $booking->booking_code], false)) . "\n\n" .
+                    "Terima kasih,\nSamzTune-UP";
+
                 $wablas->send($booking->customer_phone, $msg, true);
             } catch (\Exception $e) {
                 Log::warning('Wablas customer notify failed: ' . $e->getMessage());
