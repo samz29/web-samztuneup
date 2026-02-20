@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AppSetting;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -145,6 +146,22 @@ class BookingController extends Controller
         ]);
 
         $booking->update($request->only(['status', 'payment_status', 'notes']));
+
+        // Notify customer via Wablas about status/payment update (best-effort)
+        try {
+            $booking->refresh();
+            $wablas = app(\App\Services\WablasService::class);
+            $msg = "Halo " . $booking->customer_name . ",\n\n" .
+                "Status booking Anda (" . $booking->booking_code . ") telah diperbarui.\n" .
+                "Status: " . $booking->getStatusLabelAttribute() . "\n" .
+                "Pembayaran: " . $booking->getPaymentStatusLabelAttribute() . "\n\n" .
+                "Cek status: " . url(route('booking.track', ['booking_code' => $booking->booking_code], false)) . "\n\n" .
+                "Terima kasih,\nSamzTune-UP";
+
+            $wablas->send($booking->customer_phone, $msg, true);
+        } catch (\Exception $e) {
+            Log::warning('Wablas admin notify failed: ' . $e->getMessage());
+        }
 
         return redirect()->route('admin.bookings.index')
             ->with('success', 'Booking updated successfully.');
