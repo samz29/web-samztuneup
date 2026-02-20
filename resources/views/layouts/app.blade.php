@@ -21,7 +21,11 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @if (file_exists(public_path('mix-manifest.json')))
+        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    @else
+        <link rel="stylesheet" href="{{ asset('build/assets/app-CpEEPCb_.css') }}">
+    @endif
 
     @stack('styles')
 </head>
@@ -139,6 +143,11 @@
         @endif
     </div>
 
+    @if (file_exists(public_path('mix-manifest.json')))
+        <script src="{{ mix('js/app.js') }}" defer></script>
+    @else
+        <script src="{{ asset('build/assets/app-CRDNuMHx.js') }}" defer></script>
+    @endif
     @stack('scripts')
 </body>
 </html>

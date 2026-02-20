@@ -1,14 +1,3 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/sass/app.scss',
-                'resources/js/app.js',
-            ],
-            refresh: true,
-        }),
-    ],
-});
+// Vite removed — kept for history. Do not use this file.
+// Assets are served from `public/build/*` (prebuilt).
+// If you need a build step in future, reintroduce a build tool and update `package.json` accordingly.
