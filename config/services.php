@@ -35,6 +35,7 @@ return [
     'wablas' => [
         'url' => env('WABLAS_URL'),            // example: https://post.chilema.link/send
         'key' => env('WABLAS_KEY'),
+        'user_key' => env('WABLAS_USER_KEY'),  // optional separate key for user notifications
         'from' => env('WABLAS_FROM'),          // optional sender/number
         'admin_phone' => env('WABLAS_ADMIN_PHONE'),
     ],

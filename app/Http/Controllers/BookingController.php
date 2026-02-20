@@ -286,6 +286,18 @@ class BookingController extends Controller
                 'payment_status' => 'paid',
                 'status' => 'confirmed',
             ]);
+
+            // send confirmation to customer via Wablas (using user key if available)
+            try {
+                $wablas = app(\App\Services\WablasService::class);
+                $msg = "Pembayaran booking " . $booking->booking_code . " telah diterima. " .
+                       "Terima kasih!\n" .
+                       url(route('booking.success', $booking->booking_code, false));
+
+                $wablas->send($booking->customer_phone, $msg, true);
+            } catch (\Exception $e) {
+                Log::warning('Wablas user notify failed: ' . $e->getMessage());
+            }
         }
 
         return response()->json(['success' => true]);

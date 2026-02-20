@@ -9,12 +9,14 @@ class WablasService
     protected string $url;
     protected ?string $key;
     protected ?string $from;
+    protected ?string $userKey;
 
     public function __construct()
     {
         $this->url = config('services.wablas.url');
         $this->key = config('services.wablas.key');
         $this->from = config('services.wablas.from');
+        $this->userKey = config('services.wablas.user_key');
     }
 
     /**
@@ -24,9 +26,10 @@ class WablasService
      * @param string $message
      * @return bool
      */
-    public function send(string $to, string $message): bool
+    public function send(string $to, string $message, bool $forUser = false): bool
     {
-        if (empty($this->key) || empty($to) || empty($this->url)) {
+        $apiKey = $forUser && $this->userKey ? $this->userKey : $this->key;
+        if (empty($apiKey) || empty($to) || empty($this->url)) {
             return false;
         }
 
