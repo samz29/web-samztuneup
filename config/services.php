@@ -31,4 +31,11 @@ return [
         'address' => env('SAMZTUNE_ADDRESS', 'Jl. Workshop SamzTune-Up'),
         'city' => env('SAMZTUNE_CITY', 'Jakarta'),
     ],
+
+    'wablas' => [
+        'url' => env('WABLAS_URL'),            // example: https://post.chilema.link/send
+        'key' => env('WABLAS_KEY'),
+        'from' => env('WABLAS_FROM'),          // optional sender/number
+        'admin_phone' => env('WABLAS_ADMIN_PHONE'),
+    ],
 ];

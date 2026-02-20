@@ -196,6 +196,17 @@ class BookingController extends Controller
                         'tripay_url' => $tripayResponse['data']['checkout_url'],
                     ]);
 
+                    // send notification to admin via Wablas
+                    try {
+                        $wablas = app(\App\Services\WablasService::class);
+                        $adminPhone = config('services.wablas.admin_phone');
+                        if ($adminPhone) {
+                            $wablas->send($adminPhone, "New booking created: {$booking->booking_code} ({$booking->customer_phone})");
+                        }
+                    } catch (\Exception $e) {
+                        Log::warning('Wablas send failed: ' . $e->getMessage());
+                    }
+
                     DB::commit();
                     return redirect()->route('booking.payment', $booking->booking_code);
                 } else {
