@@ -31,17 +31,22 @@ class AppServiceProvider extends ServiceProvider
 
         // Share web menus with all views
         View::composer('*', function ($view) {
-            $headerMenus = WebMenu::with('children')
-                ->where('location', 'header')
-                ->whereNull('parent_id')
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get();
+            try {
+                $headerMenus = WebMenu::with('children')
+                    ->where('location', 'header')
+                    ->whereNull('parent_id')
+                    ->where('is_active', true)
+                    ->orderBy('sort_order')
+                    ->get();
 
-            $footerMenus = WebMenu::where('location', 'footer')
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->get();
+                $footerMenus = WebMenu::where('location', 'footer')
+                    ->where('is_active', true)
+                    ->orderBy('sort_order')
+                    ->get();
+            } catch (\Exception $e) {
+                $headerMenus = collect();
+                $footerMenus = collect();
+            }
 
             $view->with('headerMenus', $headerMenus);
             $view->with('footerMenus', $footerMenus);
