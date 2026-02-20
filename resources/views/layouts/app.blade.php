@@ -20,11 +20,25 @@
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-    <!-- Scripts -->
-    @if (file_exists(public_path('mix-manifest.json')))
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <!-- Stylesheet handling (handles nested public directory) -->
+    @php
+        // determine base asset path; support both build/ and public/build/ structures
+        $cssUrl = null;
+
+        if (file_exists(public_path('mix-manifest.json'))) {
+            $cssUrl = mix('css/app.css');
+        } elseif (file_exists(public_path('build/assets/app-CpEEPCb_.css'))) {
+            $cssUrl = asset('build/assets/app-CpEEPCb_.css');
+        } elseif (file_exists(public_path('public/build/assets/app-CpEEPCb_.css'))) {
+            // deployment where document root is one level above `public`
+            $cssUrl = asset('public/build/assets/app-CpEEPCb_.css');
+        }
+    @endphp
+
+    @if($cssUrl)
+        <link rel="stylesheet" href="{{ $cssUrl }}">
     @else
-        <link rel="stylesheet" href="{{ asset('build/assets/app-CpEEPCb_.css') }}">
+        {{-- no stylesheet found; ensure assets are built or APP_URL is correct --}}
     @endif
 
     @stack('styles')
