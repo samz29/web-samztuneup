@@ -14,7 +14,7 @@ class WablasService
 
     public function __construct()
     {
-        $this->url = config('services.wablas.url');
+        $this->url = config('services.wablas.url') ?? '';
         $this->key = config('services.wablas.key');
         $this->secretKey = config('services.wablas.secret_key');
         $this->from = config('services.wablas.from');
@@ -50,7 +50,7 @@ class WablasService
         }
 
         $response = Http::withHeaders([
-            'Authorization' => $this->key,
+            'Authorization' => $apiKey,
             'Content-Type' => 'application/json',
         ])->post($this->url, $payload);
 

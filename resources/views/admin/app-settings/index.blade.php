@@ -37,7 +37,7 @@
                         @elseif($setting->type === 'file')
                             @if($setting->value)
                                 <div class="mb-2">
-                                    <img src="{{ asset('storage/app/public/' . $setting->value) }}" alt="{{ $setting->key }}" class="img-thumbnail" style="max-width: 100px;">
+                                    <img src="{{ asset('storage/' . $setting->value) }}" alt="{{ $setting->key }}" class="img-thumbnail" style="max-width: 100px;">
                                 </div>
                             @endif
                             <input type="file" class="form-control" name="file_{{ $setting->key }}" accept="image/*">

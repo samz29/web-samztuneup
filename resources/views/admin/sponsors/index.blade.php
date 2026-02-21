@@ -15,7 +15,7 @@
             @forelse($sponsors as $sponsor)
                 <div class="col-6 col-md-4 col-lg-3">
                     <div class="card h-100 shadow-sm">
-                        <img src="{{ asset('storage/app/public/' . $sponsor->image) }}" class="card-img-top" style="object-fit:cover; height:180px; border-radius:12px 12px 0 0;">
+                        <img src="{{ asset('storage/' . $sponsor->image) }}" class="card-img-top" style="object-fit:cover; height:180px; border-radius:12px 12px 0 0;">
                         <div class="card-body p-2">
                             <div class="small text-muted mb-1">{{ $sponsor->name }}</div>
                             <div class="d-flex justify-content-between align-items-center">

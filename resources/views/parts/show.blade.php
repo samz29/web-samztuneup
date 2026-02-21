@@ -8,7 +8,7 @@
                 <div class="row g-0">
                     <!-- Product Image -->
                     <div class="col-md-6">
-                        <img src="{{ asset('storage/app/public/' . $part->image) }}" class="card-img-top rounded-start h-100" alt="{{ $part->name }}" style="object-fit: cover;">
+                        <img src="{{ asset('storage/' . $part->image) }}" class="card-img-top rounded-start h-100" alt="{{ $part->name }}" style="object-fit: cover;">
                     </div>
 
                     <!-- Product Details -->

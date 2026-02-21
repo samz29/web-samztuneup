@@ -19,7 +19,7 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 @if($part->image)
-                    <img src="{{ asset('storage/app/public/' . $gallery->image) }}" class="img-fluid mt-2 rounded" style="max-width:180px;">
+                    <img src="{{ asset('storage/' . $gallery->image) }}" class="img-fluid mt-2 rounded" style="max-width:180px;">
                 @endif
             </div>
             <div class="mb-3">

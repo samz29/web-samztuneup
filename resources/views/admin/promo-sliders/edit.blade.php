@@ -42,7 +42,7 @@
                         <label for="image">Slider Image</label>
                         @if($slider->image)
                             <div class="mb-2">
-                                <img src="{{ asset('storage/app/public/' . $slider->image) }}" alt="{{ $slider->title }}" class="img-thumbnail" style="max-width: 300px;">
+                                <img src="{{ asset('storage/' . $slider->image) }}" alt="{{ $slider->title }}" class="img-thumbnail" style="max-width: 300px;">
                                 <small class="form-text text-muted">Current image: {{ $slider->image }}</small>
                             </div>
                         @endif
