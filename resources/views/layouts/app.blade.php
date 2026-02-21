@@ -111,8 +111,8 @@
                                     <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
                                 </a></li>
                                 <li><hr class="dropdown-divider border-secondary"></li>
-                                <li><a class="dropdown-item text-light" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <li><a class="dropdown-item text-light" href="#"
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt me-2"></i>Logout
                                 </a></li>
                             </ul>
