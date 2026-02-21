@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\WebMenuController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PartController;
 use App\Http\Controllers\InstallController;
+use App\Http\Controllers\User\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Installer routes (only if not installed)
@@ -75,6 +76,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () 
     // Additional routes
     Route::post('/app-settings/bulk-update', [\App\Http\Controllers\Admin\AppSettingController::class, 'bulkUpdate'])->name('app-settings.bulk-update');
     Route::post('/web-menus/update-order', [\App\Http\Controllers\Admin\WebMenuController::class, 'updateOrder'])->name('web-menus.update-order');
+});
+
+// User routes (authenticated user dashboard)
+Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 Auth::routes();
