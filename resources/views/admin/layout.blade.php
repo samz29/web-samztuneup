@@ -54,9 +54,13 @@
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                         <span class="dropdown-item dropdown-header">{{ Auth::user()->name ?? 'Admin' }}</span>
                         <div class="dropdown-divider"></div>
-                        <a href="{{ route('logout') }}" class="dropdown-item">
+                        <a href="#" class="dropdown-item"
+                           onclick="event.preventDefault(); document.getElementById('admin-logout-form').submit();">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
                         </a>
+                        <form id="admin-logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     </div>
                 </li>
             </ul>
