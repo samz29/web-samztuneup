@@ -104,8 +104,11 @@
                                 <i class="fas fa-user me-1"></i>{{ Auth::user()->name }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item text-light" href="{{ route('user.dashboard') }}">
+                                    <i class="fas fa-user-circle me-2"></i>My Dashboard
+                                </a></li>
                                 <li><a class="dropdown-item text-light" href="{{ route('admin.dashboard') }}">
-                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                    <i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard
                                 </a></li>
                                 <li><hr class="dropdown-divider border-secondary"></li>
                                 <li><a class="dropdown-item text-light" href="{{ route('logout') }}"
